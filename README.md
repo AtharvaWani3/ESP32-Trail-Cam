@@ -8,6 +8,6 @@
 <li>TTGO watch / Arduino nano</li>
 <li>PIR Sensor</li>
 <li>Point LIDAR</li>
-<li>5V li-ion battery</li>
+<li>5V li-ion battery with jst connector and charger module</li>
 <li>micro-SD card</li>
 </ul>
