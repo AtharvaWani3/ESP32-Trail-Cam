@@ -39,10 +39,10 @@
 
 #define ENABLE_IP5306
 
-const char* ssid     = "network-name"; // CHANGE HERE
-const char* password = "network-password"; // CHANGE HERE
+const char* ssid     = "Dragon"; // CHANGE HERE
+const char* password = "12345678"; // CHANGE HERE
 
-const char* websockets_server_host = "192.168.1.149"; //CHANGE HERE
+const char* websockets_server_host = "192.168.174.73"; //CHANGE HERE
 const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
@@ -85,7 +85,6 @@ esp_err_t init_camera() {
   config.frame_size = FRAMESIZE_VGA; // FRAMESIZE_ + QVGA|CIF|VGA|SVGA|XGA|SXGA|UXGA
   config.jpeg_quality = 15; //10-63 lower number means higher quality
   config.fb_count = 2;
-  
   
   // Camera init
   esp_err_t err = esp_camera_init(&config);
