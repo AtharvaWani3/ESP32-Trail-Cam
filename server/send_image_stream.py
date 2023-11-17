@@ -42,4 +42,8 @@ def get_image():
                    b'Content-Type: image/jpeg\r\n\r\n' + img_bytes + b'\r\n')
             continue
 
-app.run(host='0.0.0.0', debug=False, threaded=True)
+#app.run(host='0.0.0.0', debug=False, threaded=True)
+
+if __name__ == "__main__":
+    # Use host='0.0.0.0' to make the server accessible from any device
+    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
