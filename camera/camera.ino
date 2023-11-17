@@ -42,8 +42,8 @@
 const char* ssid     = "Dragon"; // CHANGE HERE
 const char* password = "12345678"; // CHANGE HERE
 
-const char* websockets_server_host = "192.168.174.73"; //CHANGE HERE
-const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
+const char* websockets_server_host = "54.90.228.18"; //CHANGE HERE
+const uint16_t websockets_server_port = 3002; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
 size_t _jpg_buf_len = 0;
@@ -114,6 +114,10 @@ esp_err_t init_wifi() {
   if (!connected) {
     Serial.println("WS connect failed!");
     Serial.println(WiFi.localIP());
+    Serial.print("WebSocket server host: ");
+    Serial.println(websockets_server_host);
+    Serial.print("WebSocket server port: ");
+    Serial.println(websockets_server_port);
     state = 3;
     return ESP_FAIL;
   }
