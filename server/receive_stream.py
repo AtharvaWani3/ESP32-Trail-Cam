@@ -11,7 +11,7 @@ from pymongo import MongoClient
 import gridfs
 
 # Connect to MongoDB
-client = MongoClient("mongodb://localhost:27017")
+client = MongoClient("mongodb://54.163.61.80:27017")
 db = client["your_database_name"]  # Change 'your_database_name' to your actual database name
 fs = gridfs.GridFS(db)
 
