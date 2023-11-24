@@ -7,7 +7,7 @@ from io import BytesIO
 from PIL import Image
 from flask import Flask, Response
 from base64 import b64encode
-
+from pymongo import MongoClient
 
 
 app = Flask(__name__)
