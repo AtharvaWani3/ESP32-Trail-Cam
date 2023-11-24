@@ -11,8 +11,8 @@ from pymongo import MongoClient
 import gridfs
 
 # Connect to MongoDB
-client = MongoClient("mongodb://54.163.61.80:27017")
-db = client.get_database()
+client = MongoClient("mongodb://54.163.61.80:27017/ESP32_stream")
+db = client.get_database("ESP32_stream")
 fs = gridfs.GridFS(db)
 
 def is_valid_image(image_bytes):
