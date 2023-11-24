@@ -10,7 +10,7 @@
 
 unsigned long lastTime = millis();
 unsigned long currentTime = millis();
-unsigned long timerDelay = 5000;
+unsigned long timerDelay = 10000;
 
 //board pin config
 #define PWDN_GPIO_NUM       -1

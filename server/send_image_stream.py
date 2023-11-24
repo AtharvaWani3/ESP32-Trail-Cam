@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import asyncio
 import websockets
 import binascii
@@ -8,19 +6,14 @@ from PIL import Image
 from flask import Flask, Response
 from base64 import b64encode
 from pymongo import MongoClient
+from datetime import datetime
 
 
 app = Flask(__name__)
-
-mongo_client = MongoClient('mongodb://0.0.0.0:27017')  # Replace with your MongoDB URI
-db = mongo_client['esp32_streams']  # Replace with your database name
-collection = db['image_collection']  # Replace with your collection name
-
-def save_to_mongodb(image_bytes):
-    # Save image data to MongoDB
-    image_data = {'image_bytes': image_bytes}
-    collection.insert_one(image_data)
-    print("Image saved to MongoDB")
+# Replace these values with your MongoDB connection details
+mongo_client = MongoClient('mongodb://username:password@localhost:27017/')
+database = mongo_client['your_database_name']
+collection = database['your_collection_name']
 
 @app.route('/')
 def index():
@@ -32,15 +25,23 @@ def get_image():
         try:
             with open("image.jpg", "rb") as f:
                 image_bytes = f.read()
-
-             # Save image to MongoDB
-            save_to_mongodb(image_bytes)
-
             image = Image.open(BytesIO(image_bytes))
             img_io = BytesIO()
             image.save(img_io, 'JPEG')
             img_io.seek(0)
             img_bytes = img_io.read()
+
+            # Save image to MongoDB with a unique filename based on timestamp
+            timestamp_str = datetime.now().strftime('%Y%m%d%H%M%S')
+            filename = f"stream_chunk_{timestamp_str}.jpg"
+            document = {
+                'filename': filename,
+                'timestamp': datetime.now(),
+                'image_data': binascii.b2a_base64(img_bytes).decode('utf-8')  # Convert binary data to base64
+            }
+            collection.insert_one(document)
+
+            # Yield the image bytes for MJPEG stream
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + img_bytes + b'\r\n')
 
@@ -50,20 +51,24 @@ def get_image():
 
             with open("placeholder.jpg", "rb") as f:
                 image_bytes = f.read()
-
-            save_to_mongodb(image_bytes)
-            
             image = Image.open(BytesIO(image_bytes))
             img_io = BytesIO()
             image.save(img_io, 'JPEG')
             img_io.seek(0)
             img_bytes = img_io.read()
+
+            # Save placeholder image to MongoDB with a unique filename based on timestamp
+            timestamp_str = datetime.now().strftime('%Y%m%d%H%M%S')
+            filename = f"placeholder_chunk_{timestamp_str}.jpg"
+            document = {
+                'filename': filename,
+                'timestamp': datetime.now(),
+                'image_data': binascii.b2a_base64(img_bytes).decode('utf-8')  # Convert binary data to base64
+            }
+            collection.insert_one(document)
+
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + img_bytes + b'\r\n')
             continue
 
-# app.run(host='0.0.0.0', debug=False, threaded=True)
-
-if __name__ == "__main__":
-    # Use host='0.0.0.0' to make the server accessible from any device
-    app.run(host='0.0.0.0', port=5000, debug=False, threaded=True)
+app.run(host='0.0.0.0', debug=False, threaded=True)
