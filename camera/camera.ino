@@ -8,6 +8,10 @@
 #include "soc/rtc_cntl_reg.h" //disable brownout problems
 #include "driver/gpio.h"
 
+unsigned long lastTime = millis();
+unsigned long currentTime = millis();
+unsigned long timerDelay = 5000;
+
 //board pin config
 #define PWDN_GPIO_NUM       -1
 #define RESET_GPIO_NUM      -1
@@ -42,7 +46,7 @@
 const char* ssid     = "Dragon"; // CHANGE HERE
 const char* password = "12345678"; // CHANGE HERE
 
-const char* websockets_server_host = "54.90.228.18"; //CHANGE HERE
+const char* websockets_server_host = "192.168.174.73"; //CHANGE HERE
 const uint16_t websockets_server_port = 3002; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
@@ -137,22 +141,30 @@ void setup() {
   Serial.begin(115200);
   Serial.setDebugOutput(true);
 
+  pinMode(AS312_PIN, INPUT);
   init_camera();
   init_wifi();
 
 }
 
 void loop() {
+  currentTime = millis();
   if (client.available()) {
-    camera_fb_t *fb = esp_camera_fb_get();
-    if (!fb) {
-      Serial.println("img capture failed");
+    if(digitalRead(AS312_PIN) == HIGH){
+      while(currentTime - lastTime <= timerDelay){
+        camera_fb_t *fb = esp_camera_fb_get();
+      if (!fb) {
+        Serial.println("img capture failed");
+        esp_camera_fb_return(fb);
+        ESP.restart();
+      }
+      client.sendBinary((const char*) fb->buf, fb->len);
+      Serial.println("image sent");
       esp_camera_fb_return(fb);
-      ESP.restart();
+      client.poll();
+      lastTime = currentTime;
+      }
+      
     }
-    client.sendBinary((const char*) fb->buf, fb->len);
-    Serial.println("image sent");
-    esp_camera_fb_return(fb);
-    client.poll();
   }
 }
