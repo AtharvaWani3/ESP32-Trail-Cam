@@ -7,6 +7,14 @@ from io import BytesIO
 
 from PIL import Image, UnidentifiedImageError
 
+from pymongo import MongoClient
+import gridfs
+
+# Connect to MongoDB
+client = MongoClient("mongodb://localhost:27017")
+db = client["your_database_name"]  # Change 'your_database_name' to your actual database name
+fs = gridfs.GridFS(db)
+
 def is_valid_image(image_bytes):
     try:
         Image.open(BytesIO(image_bytes))
@@ -23,6 +31,9 @@ async def handle_connection(websocket, path):
             print(len(message))
             if len(message) > 5000:
                   if is_valid_image(message):
+                          # Store the image in MongoDB
+                          file_id = fs.put(message, filename="image.jpg")
+                          if(file_id): print("img_saved_to_mongo")
                           #print(message)
                           with open("image.jpg", "wb") as f:
                                 f.write(message)

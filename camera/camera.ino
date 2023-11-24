@@ -47,7 +47,7 @@ const char* ssid     = "Dragon"; // CHANGE HERE
 const char* password = "12345678"; // CHANGE HERE
 
 const char* websockets_server_host = "54.163.61.80"; //CHANGE HERE
-const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
+const uint16_t websockets_server_port = 3002; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
 size_t _jpg_buf_len = 0;
@@ -153,16 +153,16 @@ void loop() {
     if(digitalRead(AS312_PIN) == HIGH){
       while(currentTime - lastTime <= timerDelay){
         camera_fb_t *fb = esp_camera_fb_get();
-      if (!fb) {
-        Serial.println("img capture failed");
+        if (!fb) {
+          Serial.println("img capture failed");
+          esp_camera_fb_return(fb);
+          ESP.restart();
+        }
+        client.sendBinary((const char*) fb->buf, fb->len);
+        Serial.println("image sent");
         esp_camera_fb_return(fb);
-        ESP.restart();
-      }
-      client.sendBinary((const char*) fb->buf, fb->len);
-      Serial.println("image sent");
-      esp_camera_fb_return(fb);
-      client.poll();
-      lastTime = currentTime;
+        client.poll();
+        lastTime = currentTime;
       }
       
     }
