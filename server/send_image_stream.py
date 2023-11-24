@@ -1,14 +1,16 @@
+import asyncio
+import websockets
+import binascii
 from io import BytesIO
 from PIL import Image
 from flask import Flask, Response
 from base64 import b64encode
-from pymongo import MongoClient
 
 
 
 app = Flask(__name__)
 
-mongo_client = MongoClient('mongodb://your-mongodb-uri')  # Replace with your MongoDB URI
+mongo_client = MongoClient('mongodb://0.0.0.0:27017')  # Replace with your MongoDB URI
 db = mongo_client['esp32_streams']  # Replace with your database name
 collection = db['image_collection']  # Replace with your collection name
 

@@ -46,7 +46,7 @@ unsigned long timerDelay = 5000;
 const char* ssid     = "Dragon"; // CHANGE HERE
 const char* password = "12345678"; // CHANGE HERE
 
-const char* websockets_server_host = "192.168.174.73"; //CHANGE HERE
+const char* websockets_server_host = "3.94.198.195"; //CHANGE HERE
 const uint16_t websockets_server_port = 3002; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
