@@ -11,7 +11,7 @@ from datetime import datetime
 
 app = Flask(__name__)
 # Replace these values with your MongoDB connection details
-mongo_client = MongoClient('mongodb://username:password@localhost:27017/')
+mongo_client = MongoClient('mongodb://0.0.0.0:27017/')
 database = mongo_client['your_database_name']
 collection = database['your_collection_name']
 
