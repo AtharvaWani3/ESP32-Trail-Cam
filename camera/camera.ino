@@ -7,10 +7,16 @@
 #include "soc/soc.h" //disable brownout problems
 #include "soc/rtc_cntl_reg.h" //disable brownout problems
 #include "driver/gpio.h"
+#include <freertos/FreeRTOS.h>
+#include <freertos/task.h>
 
 unsigned long lastTime = millis();
 unsigned long currentTime = millis();
 unsigned long timerDelay = 10000;
+
+SemaphoreHandle_t detectSemaphore;
+void TaskPIR(void *pvParameters);
+void TaskStream(void *pvParameters);
 
 //board pin config
 #define PWDN_GPIO_NUM       -1
@@ -46,8 +52,8 @@ unsigned long timerDelay = 10000;
 const char* ssid     = "Dragon"; // CHANGE HERE
 const char* password = "12345678"; // CHANGE HERE
 
-const char* websockets_server_host = "54.163.61.80"; //CHANGE HERE
-const uint16_t websockets_server_port = 3002; // OPTIONAL CHANGE
+const char* websockets_server_host = "192.168.0.193"; //CHANGE HERE
+const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
 size_t _jpg_buf_len = 0;
@@ -142,29 +148,79 @@ void setup() {
   Serial.setDebugOutput(true);
 
   pinMode(AS312_PIN, INPUT);
+
+  detectSemaphore = xSemaphoreCreateBinary();
+  xSemaphoreTake(detectSemaphore, 0);
+
+  xTaskCreatePinnedToCore(
+    TaskPIR, "TaskPIR"  // A name just for humans
+    ,
+    10000  // This stack size can be checked & adjusted by reading the Stack Highwater
+    ,
+    NULL, 1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+    ,
+    NULL, 0);
+
+  xTaskCreatePinnedToCore(
+    TaskStream, "TaskStream", 10000  // Stack size
+    ,
+    NULL, 1  // Priority
+    ,
+    NULL, 1);
   init_camera();
   init_wifi();
 
 }
 
 void loop() {
-  currentTime = millis();
-  if (client.available()) {
-    if(digitalRead(AS312_PIN) == HIGH){
-      while(currentTime - lastTime <= timerDelay){
-        camera_fb_t *fb = esp_camera_fb_get();
-        if (!fb) {
-          Serial.println("img capture failed");
+  
+}
+
+bool PIRDetection(){
+  // Serial.println(analogRead(AS312_PIN));
+  return(analogRead(AS312_PIN) > 0);
+}
+
+void TaskPIR(void *pvParameters) {
+  for (;;) {
+    bool detected = PIRDetection();
+    
+    if (detected) {
+      // Serial.println("Motion detected");
+      xSemaphoreGive(detectSemaphore);
+    }
+    vTaskDelay(pdMS_TO_TICKS(1000));
+  }
+}
+
+
+void TaskStream(void *pvParameters){
+  for(;;) {
+    if (xSemaphoreTake(detectSemaphore, pdMS_TO_TICKS(100)) == pdTRUE){
+      // Serial.println(client.available());
+      if (client.available()){
+        lastTime = millis();
+        currentTime = millis();
+        while(currentTime - lastTime <= timerDelay){
+          Serial.print("Inside loop. currentTime: ");
+          Serial.print(currentTime);
+          Serial.print(", lastTime: ");
+          Serial.println(lastTime);
+          
+          camera_fb_t *fb = esp_camera_fb_get();
+          if (!fb) {
+            Serial.println("img capture failed");
+            esp_camera_fb_return(fb);
+            ESP.restart();
+          }
+          client.sendBinary((const char*) fb->buf, fb->len);
+          // Serial.println("image sent");
           esp_camera_fb_return(fb);
-          ESP.restart();
+          client.poll();
+          currentTime = millis();
         }
-        client.sendBinary((const char*) fb->buf, fb->len);
-        Serial.println("image sent");
-        esp_camera_fb_return(fb);
-        client.poll();
-        lastTime = currentTime;
+        Serial.println("Motion capture Stop");
       }
-      
     }
   }
 }
