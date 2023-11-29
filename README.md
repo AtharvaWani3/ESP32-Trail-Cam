@@ -1,10 +1,13 @@
 # ESP32-Trail-Cam
 
-<h2>Build of materials</h2>
+<h2>Build of materials and technologies used.</h2>
 <ul>
 <li>TTGo T-Camera</li>
 <li>Long range Antenna</li>
 <li>5V Li-ion battery or Power Bank</li>
+<li>Python, Flask</li>
+<li>AWS EC2</li>
+<li>MongoDB</li>
 </ul>
 
 <h2>Setup</h2>
