@@ -178,16 +178,11 @@ void loop() {
   
 }
 
-bool PIRDetection(){
-  // Serial.println(analogRead(AS312_PIN));
-  return(analogRead(AS312_PIN) > 0);
-}
 
 void TaskPIR(void *pvParameters) {
   for (;;) {
-    bool detected = PIRDetection();
     
-    if (detected) {
+    if (analogRead(AS312_PIN) > 0) {
       // Serial.println("Motion detected");
       xSemaphoreGive(detectSemaphore);
       vTaskDelay(pdMS_TO_TICKS(timerDelay));

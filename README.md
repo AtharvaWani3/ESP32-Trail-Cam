@@ -10,6 +10,9 @@
 <li>MongoDB</li>
 </ul>
 
+<h2>Overview</h2>
+<p>Trail camera's are used by wildlife photographers all the time. They usually have a storage device in the camera housing and all data is stored locally. Using IoT the data can be transmitted live so the photographers can plan their positions to capture the best photos. Also since data does not need to be stored locally, the form facotor of the device can be compacted so it does not interfere with the nature and the animal's habitat.This IoT trail camera uses a TTGo T-Camera with its ESP32 chip and a dual core processing capability to transmit the stream so that it can be viewed from anywhere in the world when triggered by movement of an animal sensed by the on board PIR sensor. The project takes advantage of the dual core processing to minimize latency in the stream.</p>
+
 <h2>Setup</h2>
 <ol>
 <li>Start EC2 instance with ubuntu.</li>
