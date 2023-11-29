@@ -31,7 +31,7 @@
 <li>In the first tab, run the command "python3 receive_stream.py"</li>
 <li>In the second tab, run the command "python3 send_image_stream.py"</li>
 <li>Upload the "camera.ino" code on to the TTGO T-Camera.</li>
-<li>To access the stream, connect to &lt;EC2_IP&gt;:5000.</li>
+<li>To access the stream, connect to "&lt;EC2_IP&gt;:5000".</li>
 <li>All of the stream data is also stored on Mongodb and can be accessed using MongoDB Compass.</li>
 </ol>
 
