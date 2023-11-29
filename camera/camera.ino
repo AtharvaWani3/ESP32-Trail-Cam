@@ -4,15 +4,15 @@
 #include "esp_timer.h"
 #include "img_converters.h"
 #include "fb_gfx.h"
-#include "soc/soc.h" //disable brownout problems
-#include "soc/rtc_cntl_reg.h" //disable brownout problems
+#include "soc/soc.h" 
+#include "soc/rtc_cntl_reg.h" 
 #include "driver/gpio.h"
 #include <freertos/FreeRTOS.h>
 #include <freertos/task.h>
 
 unsigned long lastTime = millis();
 unsigned long currentTime = millis();
-unsigned long timerDelay = 10000;
+unsigned long timerDelay = 10000; //CHANGE FOR DURATION OF STREAM
 
 SemaphoreHandle_t detectSemaphore;
 void TaskPIR(void *pvParameters);
@@ -49,10 +49,10 @@ void TaskStream(void *pvParameters);
 
 #define ENABLE_IP5306
 
-const char* ssid     = "Dragon"; // CHANGE HERE
-const char* password = "12345678"; // CHANGE HERE
+const char* ssid     = ""; // CHANGE HERE
+const char* password = ""; // CHANGE HERE
 
-const char* websockets_server_host = "192.168.0.193"; //CHANGE HERE
+const char* websockets_server_host = "0.0.0.0"; //CHANGE HERE
 const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
@@ -153,18 +153,18 @@ void setup() {
   xSemaphoreTake(detectSemaphore, 0);
 
   xTaskCreatePinnedToCore(
-    TaskPIR, "TaskPIR"  // A name just for humans
+    TaskPIR, "TaskPIR"  
     ,
-    10000  // This stack size can be checked & adjusted by reading the Stack Highwater
+    10000  
     ,
-    NULL, 1  // Priority, with 3 (configMAX_PRIORITIES - 1) being the highest, and 0 being the lowest.
+    NULL, 1  
     ,
     NULL, 0);
 
   xTaskCreatePinnedToCore(
-    TaskStream, "TaskStream", 10000  // Stack size
+    TaskStream, "TaskStream", 10000  
     ,
-    NULL, 1  // Priority
+    NULL, 1  
     ,
     NULL, 1);
   init_camera();
@@ -202,10 +202,10 @@ void TaskStream(void *pvParameters){
         lastTime = millis();
         currentTime = millis();
         while(currentTime - lastTime <= timerDelay){
-          Serial.print("Inside loop. currentTime: ");
-          Serial.print(currentTime);
-          Serial.print(", lastTime: ");
-          Serial.println(lastTime);
+          // Serial.print("Inside loop. currentTime: ");
+          // Serial.print(currentTime);
+          // Serial.print(", lastTime: ");
+          // Serial.println(lastTime);
           
           camera_fb_t *fb = esp_camera_fb_get();
           if (!fb) {
@@ -214,12 +214,12 @@ void TaskStream(void *pvParameters){
             ESP.restart();
           }
           client.sendBinary((const char*) fb->buf, fb->len);
-          // Serial.println("image sent");
+          Serial.println("image sent");
           esp_camera_fb_return(fb);
           client.poll();
           currentTime = millis();
         }
-        Serial.println("Motion capture Stop");
+        // Serial.println("Motion capture Stop");
       }
     }
   }

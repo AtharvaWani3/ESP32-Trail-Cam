@@ -2,12 +2,16 @@
 
 <h2>Build of materials</h2>
 <ul>
-<li>ESP32-Cam</li>
-<li>ESP32-Cam-mb</li>
-<li>Antenna for ESP32-Cam</li>
-<li>TTGO watch / Arduino nano</li>
-<li>PIR Sensor</li>
-<li>Point LIDAR</li>
-<li>5V li-ion battery with jst connector and charger module</li>
-<li>micro-SD card</li>
+<li>TTGo T-Camera</li>
+<li>Long range Antenna</li>
+<li>5V Li-ion battery or Power Bank</li>
 </ul>
+
+<h2>Setup</h2>
+<ol>
+<li>Start EC2 instance with ubuntu.</li>
+<li>Clone the repository to the EC2 instance.</li>
+<li>Navigate inside the repository to the folder "server".
+    <br>Add executable tags to following files:"dependencies.sh", "receive_stream.py", "send_image_stream.py" by using the following command:
+    <br> chmod +x &lt;file_name&gt;</li>
+</ol>
