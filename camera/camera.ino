@@ -12,7 +12,8 @@
 
 unsigned long lastTime = millis();
 unsigned long currentTime = millis();
-unsigned long timerDelay = 10000; //CHANGE FOR DURATION OF STREAM
+unsigned long streamTime = 10; //CHANGE FOR DURATION OF STREAM (MIN)
+unsigned long timerDelay = streamTime * 60 * 1000; 
 
 SemaphoreHandle_t detectSemaphore;
 void TaskPIR(void *pvParameters);
@@ -53,7 +54,7 @@ const char* ssid     = ""; // CHANGE HERE
 const char* password = ""; // CHANGE HERE
 
 const char* websockets_server_host = "0.0.0.0"; //CHANGE HERE
-const uint16_t websockets_server_port = 3001; // OPTIONAL CHANGE
+const uint16_t websockets_server_port = 3002; // OPTIONAL CHANGE
 
 camera_fb_t * fb = NULL;
 size_t _jpg_buf_len = 0;
